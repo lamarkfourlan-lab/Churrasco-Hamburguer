@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#171a18" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Crect width=%27100%27 height=%27100%27 rx=%2728%27 fill=%27%23c8f169%27/%3E%3Cpath d=%27M24 46c1-15 12-25 26-25s25 10 26 25H24zm-2 8h56v8H22zm5 13h46c-2 11-10 16-23 16S29 78 27 67z%27 fill=%27%23171a18%27/%3E%3Ccircle cx=%2741%27 cy=%2731%27 r=%272%27 fill=%27%23c8f169%27/%3E%3Ccircle cx=%2750%27 cy=%2728%27 r=%272%27 fill=%27%23c8f169%27/%3E%3Ccircle cx=%2759%27 cy=%2731%27 r=%272%27 fill=%27%23c8f169%27/%3E%3C/svg%3E" />
+  <title>Churrasco e Hamburguer</title>
+  <style>
+    :root {
+      --primary: #e85d04;
+      --primary-dark: #b94700;
+      --secondary: #ffb703;
+      --cream: #fff8ef;
+      --ink: #24180f;
+      --muted: #806f61;
+      --line: #efdfd0;
+      --white: #ffffff;
+      --green: #2f9e44;
+      --red: #c92a2a;
+      --shadow: 0 16px 42px rgba(92, 47, 13, .10);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: var(--ink); background: linear-gradient(180deg, #fffdf9 0%, var(--cream) 100%); min-height: 100vh; }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    .app-shell { min-height: 100vh; display: flex; flex-direction: column; }
+    .topbar { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px clamp(16px, 4vw, 56px); background: rgba(255, 253, 249, .93); backdrop-filter: blur(14px); border-bottom: 1px solid rgba(239, 223, 208, .8); }
+    .brand-mini { display: flex; align-items: center; gap: 11px; min-width: 0; }
+    .brand-mark { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 14px; background: var(--primary); color: #fff; font-size: 25px; box-shadow: 0 8px 18px rgba(232, 93, 4, .25); flex: 0 0 auto; overflow: hidden; }
+    .brand-mark img { width: 100%; height: 100%; object-fit: cover; }
+    .brand-mini strong { display: block; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 250px; }
+    .brand-mini small { color: var(--muted); font-size: 12px; }
+    .top-actions { display: flex; gap: 5px; overflow-x: auto; }
+    .nav-button { border: 0; background: transparent; color: var(--muted); padding: 9px 10px; border-radius: 12px; font-weight: 800; white-space: nowrap; }
+    .nav-button:hover, .nav-button.active { color: var(--primary-dark); background: #fff0e2; }
+    main { width: min(1160px, calc(100% - 36px)); margin: 0 auto; flex: 1; padding: 42px 0 88px; }
+    .screen { display: none; animation: enter .25s ease-out; }
+    .screen.active { display: block; }
+    @keyframes enter { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .hero { display: grid; grid-template-columns: 1.08fr .92fr; align-items: center; gap: 34px; min-height: 400px; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 8px; color: var(--primary-dark); background: #fff0e2; border-radius: 999px; padding: 8px 13px; font-weight: 900; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; }
+    h1 { font-size: clamp(38px, 6vw, 72px); line-height: .98; letter-spacing: -.055em; margin: 18px 0 16px; max-width: 680px; }
+    h1 span { color: var(--primary); }
+    h2 { font-size: clamp(26px, 4vw, 40px); letter-spacing: -.04em; margin: 10px 0 8px; }
+    h3 { margin: 0 0 6px; }
+    .lead { color: var(--muted); max-width: 560px; line-height: 1.65; font-size: 17px; }
+    .hero-actions, .form-actions, .report-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
+    .primary, .secondary, .ghost, .danger { border-radius: 13px; padding: 12px 17px; font-weight: 850; border: 1px solid transparent; transition: .2s ease; }
+    .primary { color: #fff; background: var(--primary); box-shadow: 0 10px 20px rgba(232, 93, 4, .22); }
+    .primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+    .secondary { color: var(--primary-dark); background: #fff0e2; }
+    .secondary:hover { background: #ffe2c7; }
+    .ghost { color: var(--muted); background: transparent; border-color: var(--line); }
+    .ghost:hover { color: var(--primary-dark); border-color: var(--primary); }
+    .danger { color: var(--red); background: #fff0f0; border-color: #ffd5d5; }
+    .danger:hover { background: #ffe0e0; }
+    .visual { min-height: 350px; position: relative; display: grid; place-items: center; }
+    .visual::before { content: ""; position: absolute; inset: 18px 16px 22px 32px; border-radius: 42% 58% 55% 45%; background: #ffe6bd; transform: rotate(-7deg); }
+    .pizza-plate { position: relative; width: min(320px, 77vw); aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center; background: #fff; border: 12px solid #f9c074; box-shadow: var(--shadow); font-size: 132px; transform: rotate(8deg); overflow: hidden; }
+    .pizza-plate img { width: 100%; height: 100%; object-fit: cover; }
+    .floating { position: absolute; padding: 13px 15px; border-radius: 16px; background: rgba(255,255,255,.96); box-shadow: var(--shadow); font-weight: 850; }
+    .floating.one { top: 26px; right: 0; } .floating.two { bottom: 23px; left: 0; }
+    .floating small { display: block; color: var(--muted); font-weight: 600; margin-top: 3px; }
+    .section-heading { display: flex; justify-content: space-between; align-items: end; gap: 12px; margin-bottom: 16px; }
+    .section-heading p, .page-header p { color: var(--muted); margin: 0; }
+    .quick-section { margin-top: 24px; }
+    .quick-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .quick-card { text-align: left; border: 1px solid var(--line); background: #fff; padding: 20px; border-radius: 20px; box-shadow: 0 7px 24px rgba(92, 47, 13, .05); }
+    button.quick-card { color: var(--ink); }
+    .quick-card:hover { border-color: #ffc58c; transform: translateY(-2px); }
+    .quick-icon { font-size: 28px; margin-bottom: 13px; }
+    .quick-card p { color: var(--muted); margin: 0; line-height: 1.45; font-size: 14px; }
+    .page-header { margin-bottom: 25px; }
+    .content-card { background: #fff; border: 1px solid var(--line); border-radius: 24px; padding: clamp(20px, 4vw, 36px); box-shadow: var(--shadow); }
+    .profile-layout { display: grid; grid-template-columns: 240px 1fr; gap: 34px; align-items: start; }
+    .photo-area { display: flex; flex-direction: column; align-items: center; gap: 13px; }
+    .avatar { width: 185px; height: 185px; overflow: hidden; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(135deg, #fff0e2, #ffd48e); color: var(--primary-dark); font-size: 76px; border: 7px solid #fff; box-shadow: 0 0 0 1px var(--line), var(--shadow); }
+    .avatar img, .saved-avatar img, .home-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .file-label { color: var(--primary-dark); font-weight: 850; font-size: 14px; cursor: pointer; }
+    .file-label input { display: none; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 17px; }
+    .field { display: flex; flex-direction: column; gap: 7px; }
+    .field.full { grid-column: 1 / -1; }
+    label { font-size: 13px; font-weight: 850; }
+    input, select { width: 100%; border: 1px solid var(--line); background: #fffdfb; border-radius: 12px; padding: 12px 13px; color: var(--ink); outline: none; }
+    input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(232, 93, 4, .11); }
+    .status { min-height: 22px; margin-top: 12px; color: var(--green); font-size: 14px; font-weight: 750; }
+    .saved-profile { display: none; margin-top: 24px; background: #fff; border: 1px solid var(--line); border-radius: 22px; padding: 21px; }
+    .saved-profile.visible { display: block; }
+    .saved-head { display: flex; align-items: center; gap: 14px; }
+    .saved-avatar, .home-avatar { width: 64px; height: 64px; border-radius: 18px; overflow: hidden; display: grid; place-items: center; background: #fff0e2; font-size: 28px; flex: 0 0 auto; }
+    .saved-head p { margin: 4px 0 0; color: var(--muted); font-size: 14px; }
+    .mini-info { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 17px; }
+    .info-pill { color: var(--primary-dark); background: #fff0e2; padding: 8px 10px; border-radius: 9px; font-size: 13px; font-weight: 750; }
+    .socials { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .socials a { color: var(--primary-dark); text-decoration: none; background: #fff0e2; padding: 8px 10px; border-radius: 9px; font-size: 13px; font-weight: 750; }
+    .profile-pix-card { display: none; margin-top: 24px; background: #fff; border: 1px solid var(--line); border-radius: 22px; padding: 22px; box-shadow: var(--shadow); }
+    .profile-pix-card.visible { display: block; }
+    .profile-pix-layout { display: grid; grid-template-columns: 190px 1fr; align-items: center; gap: 22px; }
+    #profileQrImage { display: block; width: 180px; height: 180px; object-fit: contain; background: #fff; border: 8px solid #fff; box-shadow: 0 0 0 1px var(--line); }
+    .pix-help { color: var(--muted); font-size: 13px; line-height: 1.55; margin: 5px 0 13px; }
+    .profile-pix-copy { width: 100%; min-height: 68px; resize: vertical; color: var(--muted); background: #fffaf5; border: 1px solid var(--line); border-radius: 11px; padding: 10px; font-size: 11px; }
+    .sale-layout { display: grid; grid-template-columns: 1fr 340px; gap: 20px; align-items: start; }
+    .product-picker { display: grid; grid-template-columns: repeat(2, 1fr); gap: 13px; }
+    .sale-product { border: 1px solid var(--line); border-radius: 18px; background: #fff; padding: 16px; transition: .18s ease; }
+    .sale-product.selected { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(232, 93, 4, .12); }
+    .sale-product .product-icon { font-size: 31px; }
+    .sale-product h3 { margin-top: 10px; font-size: 16px; }
+    .sale-product p { color: var(--muted); font-size: 13px; min-height: 20px; margin: 5px 0 13px; }
+    .sale-bottom { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .price { color: var(--primary-dark); font-weight: 900; }
+    .quantity { display: flex; align-items: center; gap: 8px; }
+    .quantity button { width: 29px; height: 29px; border-radius: 9px; border: 1px solid var(--line); background: #fff8ef; color: var(--primary-dark); font-weight: 900; }
+    .quantity strong { min-width: 18px; text-align: center; }
+    .panel { background: #fff; border: 1px solid var(--line); border-radius: 20px; padding: 20px; box-shadow: 0 7px 24px rgba(92, 47, 13, .05); }
+    .panel h3 { margin-bottom: 14px; }
+    .order-lines { min-height: 84px; }
+    .order-line { display: flex; justify-content: space-between; gap: 10px; padding: 9px 0; border-bottom: 1px solid #f6eadf; font-size: 14px; }
+    .order-line small { color: var(--muted); display: block; margin-top: 2px; }
+    .order-total { display: flex; justify-content: space-between; padding-top: 16px; font-weight: 900; font-size: 18px; }
+    .empty { color: var(--muted); line-height: 1.5; padding: 12px 0; font-size: 14px; }
+    .history { margin-top: 26px; }
+    .history-list { display: grid; gap: 10px; }
+    .history-item { display: flex; justify-content: space-between; gap: 15px; align-items: center; border: 1px solid var(--line); border-radius: 14px; background: #fff; padding: 13px 15px; }
+    .history-item p { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+    .history-item strong { white-space: nowrap; color: var(--primary-dark); }
+    .inventory-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
+    .inventory-actions button.active { color: #fff; background: var(--primary); border-color: var(--primary); }
+    .material-form { display: grid; grid-template-columns: 1.25fr 1.2fr .72fr .72fr auto; gap: 12px; align-items: end; }
+    .barcode-field { position: relative; }
+    .barcode-field input { padding-right: 42px; }
+    .barcode-status { color: var(--muted); font-size: 12px; line-height: 1.4; margin-top: 6px; }
+    .scanner-box { display: none; margin: 18px 0 4px; padding: 14px; background: #fffaf5; border: 1px solid var(--line); border-radius: 16px; }
+    .scanner-box.visible { display: block; }
+    .scanner-box video { width: 100%; max-height: 230px; border-radius: 12px; object-fit: cover; background: #24180f; }
+    .scanner-box p { color: var(--muted); font-size: 13px; margin: 8px 0 10px; }
+    .material-history { display: grid; gap: 9px; margin-top: 22px; }
+    .material-movement { display: flex; justify-content: space-between; gap: 15px; align-items: center; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; }
+    .material-movement p { color: var(--muted); font-size: 13px; margin: 4px 0 0; }
+    .movement-in { color: var(--green); font-weight: 900; }
+    .movement-out { color: var(--red); font-weight: 900; }
+    .inventory-report-view { display: none; margin-top: 25px; background: #fff; border: 1px solid var(--line); border-radius: 20px; padding: 25px; box-shadow: var(--shadow); }
+    .inventory-report-view.visible { display: block; }
+    .inventory-report-head { border-bottom: 2px solid var(--ink); padding-bottom: 14px; margin-bottom: 15px; }
+    .inventory-report-head h3 { font-size: 22px; }
+    .inventory-report-head p { color: var(--muted); font-size: 13px; margin: 5px 0 0; }
+    .inventory-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .inventory-table th, .inventory-table td { padding: 10px 6px; border-bottom: 1px solid #f2e7de; text-align: left; }
+    .inventory-table th:not(:first-child), .inventory-table td:not(:first-child) { text-align: right; }
+    .inventory-report-total { display: flex; justify-content: space-between; padding-top: 17px; font-size: 16px; font-weight: 900; }
+    .product-form { display: grid; grid-template-columns: 1.2fr .8fr .8fr auto; gap: 12px; align-items: end; }
+    .product-list { display: grid; gap: 10px; margin-top: 23px; }
+    .registered-product { display: flex; justify-content: space-between; gap: 15px; align-items: center; border: 1px solid var(--line); border-radius: 15px; padding: 13px 15px; background: #fff; }
+    .registered-product p { color: var(--muted); margin: 4px 0 0; font-size: 13px; }
+    .product-right { display: flex; align-items: center; gap: 12px; }
+    .category-badge { display: inline-block; margin-left: 8px; color: var(--primary-dark); background: #fff0e2; border-radius: 999px; padding: 4px 8px; font-size: 11px; font-weight: 850; }
+    .reports-grid { display: grid; grid-template-columns: 1fr 330px; gap: 20px; align-items: start; }
+    .report-preview { background: #fff; border: 1px solid var(--line); border-radius: 20px; padding: 25px; box-shadow: var(--shadow); min-height: 350px; }
+    .report-title { border-bottom: 2px solid var(--ink); padding-bottom: 14px; margin-bottom: 15px; }
+    .report-title h3 { font-size: 22px; }
+    .report-title p { margin: 5px 0 0; color: var(--muted); font-size: 13px; }
+    .report-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .report-table th, .report-table td { text-align: left; padding: 10px 5px; border-bottom: 1px solid #f2e7de; }
+    .report-table th:last-child, .report-table td:last-child { text-align: right; }
+    .report-total { display: flex; justify-content: space-between; padding-top: 18px; font-size: 18px; font-weight: 900; }
+    .payment-breakdown { margin-top: 24px; padding-top: 17px; border-top: 1px solid var(--line); }
+    .payment-breakdown h3 { margin: 0 0 8px; font-size: 17px; }
+    .small-note { color: var(--muted); font-size: 12px; line-height: 1.55; margin-top: 14px; }
+    .qr-screen { max-width: 650px; margin: 0 auto; }
+    .qr-card { text-align: center; background: #fff; border: 1px solid var(--line); border-radius: 26px; padding: 28px; box-shadow: var(--shadow); }
+    .qr-card h2 { margin-top: 0; }
+    .qr-card .amount { color: var(--primary-dark); font-size: 31px; font-weight: 950; margin: 10px 0 20px; }
+    #qrImage { display: block; width: min(260px, 80vw); height: min(260px, 80vw); object-fit: contain; margin: 0 auto 18px; border: 10px solid #fff; box-shadow: 0 0 0 1px var(--line); }
+    .pix-copy { width: 100%; min-height: 72px; resize: vertical; color: var(--muted); background: #fffaf5; border: 1px solid var(--line); border-radius: 11px; padding: 10px; font-size: 11px; }
+    .qr-actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 9px; margin-top: 20px; }
+    .order-receipt { display: none; text-align: left; max-width: 430px; margin: 0 auto; border-top: 2px dashed var(--line); border-bottom: 2px dashed var(--line); padding: 18px 0; }
+    .order-receipt h3 { text-align: center; font-size: 20px; }
+    .receipt-meta { color: var(--muted); font-size: 12px; text-align: center; margin: 4px 0 15px; }
+    .receipt-line { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-bottom: 1px solid #f2e7de; font-size: 13px; }
+    .receipt-total { display: flex; justify-content: space-between; padding-top: 14px; font-size: 18px; font-weight: 900; }
+    footer { color: var(--muted); text-align: center; font-size: 12px; padding: 22px; }
+    .toast { position: fixed; left: 50%; bottom: 22px; z-index: 20; transform: translate(-50%, 20px); opacity: 0; pointer-events: none; background: var(--ink); color: #fff; padding: 12px 16px; border-radius: 12px; box-shadow: var(--shadow); transition: .25s ease; font-size: 14px; }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+    @media (max-width: 850px) { .sale-layout, .reports-grid { grid-template-columns: 1fr; } .panel { order: -1; } .product-form, .material-form { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 700px) {
+      .topbar { padding: 12px 16px; align-items: flex-start; }
+      .brand-mini strong { max-width: 140px; }
+      .nav-button { padding: 8px 7px; font-size: 12px; }
+      main { padding-top: 28px; }
+      .hero, .profile-layout, .profile-pix-layout { grid-template-columns: 1fr; }
+      .profile-pix-layout { justify-items: center; text-align: center; }
+      .hero { gap: 3px; }
+      .visual { min-height: 275px; }
+      .pizza-plate { width: 230px; font-size: 94px; }
+      .visual::before { inset: 20px 18px 18px 30px; }
+      .floating.one { right: 0; top: 12px; } .floating.two { left: 0; bottom: 5px; }
+      .quick-grid, .form-grid, .product-picker { grid-template-columns: 1fr; }
+      .field.full { grid-column: auto; }
+      .product-form, .material-form { grid-template-columns: 1fr; }
+      .registered-product, .history-item, .material-movement { align-items: flex-start; flex-direction: column; }
+      .product-right { width: 100%; justify-content: space-between; }
+    }
+    @media print {
+      body { background: #fff; }
+      .topbar, footer, .report-actions, .page-header, .small-note { display: none !important; }
+      main { width: 100%; padding: 0; }
+      .screen { display: none !important; }
+      #reports { display: block !important; }
+      .reports-grid { display: block; }
+      .report-preview { border: 0; box-shadow: none; padding: 0; }
+      body.print-inventory .screen { display: none !important; }
+      body.print-inventory #inventory { display: block !important; }
+      body.print-inventory #inventory > * { display: none !important; }
+      body.print-inventory #inventory .inventory-report-view { display: block !important; border: 0; box-shadow: none; padding: 0; margin: 0; }
+      body.print-order .screen { display: none !important; }
+      body.print-order #payment { display: block !important; }
+      body.print-order #payment .qr-card > :not(.order-receipt) { display: none !important; }
+      body.print-order #payment .order-receipt { display: block !important; border: 0; margin: 0 auto; }
+    }
+
+    /* Identidade visual: brasa contemporânea */
+    :root {
+      --primary: #c8f169;
+      --primary-dark: #29451e;
+      --secondary: #f3a45e;
+      --cream: #f4f1e9;
+      --ink: #171a18;
+      --muted: #72766f;
+      --line: #e4e1d8;
+      --white: #ffffff;
+      --green: #33834c;
+      --red: #c5463a;
+      --shadow: 0 18px 48px rgba(23, 26, 24, .09);
+    }
+    body { background: #f5f3ed; }
+    .topbar { background: rgba(23,26,24,.97); border-bottom: 1px solid rgba(255,255,255,.08); color: #fff; }
+    .brand-mini small { color: #b2b8ae; }
+    .brand-mark { background: var(--primary); color: var(--ink); border-radius: 15px; box-shadow: 0 8px 20px rgba(200,241,105,.2); }
+    .brand-icon { display: block; width: 100%; height: 100%; fill: currentColor; }
+    .top-actions { scrollbar-width: thin; }
+    .nav-button { color: #d1d5ce; }
+    .nav-button:hover, .nav-button.active { color: var(--ink); background: var(--primary); }
+    main { padding-top: 38px; }
+    .hero { position: relative; overflow: hidden; padding: clamp(24px, 5vw, 58px); border-radius: 30px; background: radial-gradient(circle at 82% 40%, rgba(200,241,105,.15), transparent 32%), linear-gradient(130deg,#171a18 0%,#242a23 62%,#35432e 100%); color: #fff; box-shadow: 0 24px 60px rgba(23,26,24,.15); }
+    .hero::after { content: ''; position: absolute; width: 290px; height: 290px; right: -120px; top: -150px; border: 1px solid rgba(200,241,105,.2); border-radius: 50%; box-shadow: 0 0 0 28px rgba(200,241,105,.035),0 0 0 58px rgba(200,241,105,.025); pointer-events:none; }
+    .hero > * { position: relative; z-index: 1; }
+    .hero .eyebrow, .page-header .eyebrow { color: #31451f; background: var(--primary); }
+    h1 { color: #fff; }
+    h1 span { color: var(--primary); }
+    .lead { color: #d0d5cc; }
+    .primary { color: #1c2417; background: var(--primary); box-shadow: 0 10px 24px rgba(200,241,105,.18); }
+    .primary:hover { color: #fff; background: #486a32; }
+    .secondary { color: #754018; background: #fff0df; }
+    .secondary:hover { background: #ffe1bf; }
+    .ghost { color: var(--muted); }
+    .visual { min-height: 330px; }
+    .visual::before { inset: 18px 16px 22px 32px; background: rgba(200,241,105,.11); border: 1px solid rgba(200,241,105,.15); }
+    .pizza-plate { width: min(300px,77vw); border: 0; background: linear-gradient(145deg,#d8fb91,#b8e75a); color: #1b2516; box-shadow: 0 22px 55px rgba(0,0,0,.26), inset 0 0 0 12px rgba(255,255,255,.28); transform: rotate(5deg); }
+    .pizza-plate .brand-icon { width: 73%; height: 73%; filter: drop-shadow(0 7px 4px rgba(35,47,25,.12)); }
+    .floating { color: var(--ink); border: 1px solid rgba(255,255,255,.7); backdrop-filter: blur(8px); }
+    .quick-card, .content-card, .panel, .report-preview, .qr-card, .inventory-report-view, .saved-profile, .profile-pix-card { border-color: var(--line); box-shadow: var(--shadow); }
+    .quick-card { border-radius: 19px; transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
+    .quick-card:hover { border-color: #b8d890; box-shadow: 0 14px 32px rgba(23,26,24,.1); }
+    .quick-icon { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 15px; background: #eff6e4; }
+    .content-card, .panel, .report-preview, .qr-card { border-radius: 22px; }
+    input, select { background: #fff; border-radius: 11px; }
+    input:focus, select:focus { border-color: #91bd53; box-shadow: 0 0 0 4px rgba(200,241,105,.24); }
+    .avatar { color: #334521; background: linear-gradient(135deg,#e8f5d4,#c8f169); }
+    .saved-avatar, .home-avatar { background: #eff6e4; }
+    .avatar .brand-icon, .saved-avatar .brand-icon, .home-avatar .brand-icon { width: 66%; height: 66%; color: #31451f; }
+    .info-pill, .socials a, .category-badge { color: #344a25; background: #eff6e4; }
+    .sale-product { border-radius: 16px; }
+    .sale-product.selected { border-color: #8ebd49; box-shadow: 0 0 0 3px rgba(200,241,105,.28); }
+    .price, .history-item strong, .qr-card .amount { color: #314b24; }
+    .quantity button { background: #f2f6eb; color: #314b24; }
+    .order-line { border-bottom-color: #eeece5; }
+    .history-item, .registered-product, .material-movement { border-color: var(--line); border-radius: 13px; }
+    .inventory-actions button.active { color: #1c2417; background: var(--primary); border-color: var(--primary); }
+    .scanner-box { background: #f8f7f2; }
+    .report-title, .inventory-report-head { border-color: #343a32; }
+    .report-table th, .report-table td, .inventory-table th, .inventory-table td { border-bottom-color: #eceae3; }
+    .qr-card { padding: clamp(22px,5vw,40px); }
+    footer { color: #82877e; }
+    .toast { background: #20251f; }
+    @media (max-width: 700px) {
+      .topbar { align-items: center; flex-direction: column; gap: 8px; }
+      .brand-mini { width: 100%; }
+      .brand-mini strong { max-width: calc(100vw - 90px); }
+      .top-actions { width: 100%; padding-bottom: 2px; }
+      main { width: min(100% - 24px,1160px); padding-top: 20px; }
+      .hero { border-radius: 23px; padding: 24px 20px; }
+      .visual { min-height: 255px; }
+      .pizza-plate { width: 215px; }
+      .floating { padding: 10px 12px; font-size: 13px; }
+      .quick-card { padding: 17px; }
+    }
+    .payment-method-modal { display:none; position:fixed; inset:0; z-index:25; place-items:center; padding:18px; background:rgba(14,18,14,.68); backdrop-filter:blur(7px); }
+    .payment-method-modal.visible { display:grid; }
+    .payment-method-card { width:min(100%,520px); max-height:min(92vh,760px); overflow:auto; position:relative; padding:clamp(24px,5vw,38px); border:1px solid rgba(255,255,255,.72); border-radius:26px; background:#fff; box-shadow:0 28px 90px rgba(0,0,0,.28); }
+    .payment-method-card h2 { margin:16px 0 6px; font-size:clamp(25px,5vw,34px); }
+    .payment-method-card > p { margin:0; color:var(--muted); }
+    .payment-method-close { position:absolute; top:16px; right:17px; width:38px; height:38px; border:0; border-radius:12px; background:#f1f2ed; color:var(--ink); font-size:26px; line-height:1; }
+    .payment-method-total { display:flex; justify-content:space-between; gap:12px; align-items:center; margin:22px 0 14px; padding:16px; border-radius:15px; background:#f2f6eb; color:#394333; }
+    .payment-method-total strong { color:#263d1e; font-size:21px; }
+    .payment-method-options { display:grid; gap:9px; }
+    .payment-method-option { display:flex; align-items:center; gap:13px; width:100%; padding:13px 15px; border:1px solid var(--line); border-radius:15px; background:#fff; color:var(--ink); text-align:left; transition:.18s ease; }
+    .payment-method-option:hover, .payment-method-option:focus-visible { border-color:#9fc75f; background:#fafff2; transform:translateY(-1px); outline:none; }
+    .payment-method-option .method-symbol { display:grid; place-items:center; width:43px; height:43px; flex:0 0 auto; border-radius:13px; background:#eff6e4; font-size:23px; }
+    .payment-method-option > span:nth-child(2) { display:grid; gap:3px; flex:1; }
+    .payment-method-option small { color:var(--muted); font-size:12px; }
+    .payment-method-option > b { color:#718261; font-size:24px; }
+    .payment-choice-cancel { width:100%; margin-top:7px; }
+    @media print { .payment-method-modal { display:none !important; } }
+    @media (prefers-reduced-motion: reduce) { *,*::before,*::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand-mini">
+        <div class="brand-mark" id="headerLogo"><svg class="brand-icon" viewBox="0 0 100 100" aria-hidden="true"><path d="M22 46c1-15 12-25 28-25s27 10 28 25H22zm-2 8h60v8H20zm7 13h46c-2 11-10 16-23 16S29 78 27 67z"/><circle cx="41" cy="31" r="2.2"/><circle cx="50" cy="28" r="2.2"/><circle cx="59" cy="31" r="2.2"/></svg></div>
+        <div><strong id="headerName">Churrasco e Hamburguer</strong><small>Painel do estabelecimento</small></div>
+      </div>
+      <nav class="top-actions" aria-label="Navegação principal">
+        <button class="nav-button active" data-screen="home">Início</button>
+        <button class="nav-button" data-screen="sale">Vendas</button>
+        <button class="nav-button" data-screen="products">Produtos</button>
+        <button class="nav-button" data-screen="inventory">Estoque</button>
+        <button class="nav-button" data-screen="reports">Relatórios</button>
+        <button class="nav-button" data-screen="profile">Perfil</button>
+      </nav>
+    </header>
+
+    <main>
+      <section id="home" class="screen active" aria-labelledby="homeTitle">
+        <div class="hero">
+          <div>
+            <span class="eyebrow">🍔 Brasa acesa. Negócio em movimento.</span>
+            <h1 id="homeTitle">Bem-vindo à sua <span id="homeBusinessWord">Churrasco e Hamburguer.</span></h1>
+            <p class="lead" id="homeLead">Churrasco na brasa, hambúrguer artesanal e gestão do seu negócio em poucos toques.</p>
+            <div class="hero-actions">
+              <button class="primary" data-go="sale">Abrir área de venda →</button>
+              <button class="secondary" data-go="profile">Configurar perfil</button>
+            </div>
+          </div>
+          <div class="visual" aria-hidden="true">
+            <div class="pizza-plate" id="homeLogo"><svg class="brand-icon" viewBox="0 0 100 100" aria-hidden="true"><path d="M22 46c1-15 12-25 28-25s27 10 28 25H22zm-2 8h60v8H20zm7 13h46c-2 11-10 16-23 16S29 78 27 67z"/><circle cx="41" cy="31" r="2.2"/><circle cx="50" cy="28" r="2.2"/><circle cx="59" cy="31" r="2.2"/></svg></div>
+            <div class="floating one">Atendimento ágil<small>Mais sabor, menos espera</small></div>
+            <div class="floating two">Feito com carinho ❤️</div>
+          </div>
+        </div>
+        <div class="quick-section">
+          <div class="section-heading"><div><h2>Acesso rápido</h2><p>As ferramentas principais do seu dia.</p></div></div>
+          <div class="quick-grid">
+            <button class="quick-card" data-go="sale"><div class="quick-icon">🧾</div><h3>Nova venda</h3><p>Selecione os produtos e gere o QR Code de pagamento.</p></button>
+            <button class="quick-card" data-go="products"><div class="quick-icon">🍽️</div><h3>Cadastrar produtos</h3><p>Cadastre hambúrgueres, churrasco, acompanhamentos e bebidas.</p></button>
+            <button class="quick-card" data-go="reports"><div class="quick-icon">📊</div><h3>Relatório do dia</h3><p id="homeReportText">Consulte o total vendido e salve o relatório em PDF.</p></button>
+            <button class="quick-card" data-go="inventory"><div class="quick-icon">📦</div><h3>Entrada e saída</h3><p id="homeInventoryText">Controle os materiais que entraram, saíram e restaram.</p></button>
+          </div>
+        </div>
+        <div id="homeProfileCard" class="saved-profile" style="margin-top:24px">
+          <div class="saved-head"><div class="home-avatar" id="homeAvatar"><svg class="brand-icon" viewBox="0 0 100 100" aria-hidden="true"><path d="M22 46c1-15 12-25 28-25s27 10 28 25H22zm-2 8h60v8H20zm7 13h46c-2 11-10 16-23 16S29 78 27 67z"/><circle cx="41" cy="31" r="2.2"/><circle cx="50" cy="28" r="2.2"/><circle cx="59" cy="31" r="2.2"/></svg></div><div><h3 id="homeProfileName">Seu estabelecimento</h3><p id="homeProfileEmail">Cadastre o perfil para exibir suas informações aqui.</p></div></div>
+          <div class="mini-info" id="homeInfoPills"></div>
+          <div class="socials" id="homeSocialLinks"></div>
+        </div>
+      </section>
+
+      <section id="profile" class="screen" aria-labelledby="profileTitle">
+        <div class="page-header"><span class="eyebrow">🏪 Identidade da marca</span><h2 id="profileTitle">Perfil do estabelecimento</h2><p>Cadastre os dados que serão exibidos na tela inicial.</p></div>
+        <div class="content-card">
+          <div class="profile-layout">
+            <div class="photo-area">
+              <div class="avatar" id="avatarPreview"><svg class="brand-icon" viewBox="0 0 100 100" aria-hidden="true"><path d="M22 46c1-15 12-25 28-25s27 10 28 25H22zm-2 8h60v8H20zm7 13h46c-2 11-10 16-23 16S29 78 27 67z"/><circle cx="41" cy="31" r="2.2"/><circle cx="50" cy="28" r="2.2"/><circle cx="59" cy="31" r="2.2"/></svg></div>
+              <label class="file-label">📷 Escolher foto<input id="photoInput" type="file" accept="image/*"></label>
+              <small style="color:var(--muted);text-align:center">JPG ou PNG · opcional</small>
+            </div>
+            <div>
+              <div class="form-grid">
+                <div class="field full"><label for="businessName">Nome do estabelecimento *</label><input id="businessName" type="text" placeholder="Churrasco e Hamburguer" autocomplete="organization"></div>
+                <div class="field"><label for="email">E-mail</label><input id="email" type="email" placeholder="contato@seudominio.com" autocomplete="email"></div>
+                <div class="field"><label for="pixKeyType">Tipo da chave PIX</label><select id="pixKeyType"><option value="auto">Detectar automaticamente</option><option value="email">E-mail</option><option value="phone">Celular</option><option value="cpf">CPF</option><option value="cnpj">CNPJ</option><option value="random">Chave aleatória</option></select></div>
+                <div class="field full"><label for="pixKey">Chave PIX</label><input id="pixKey" type="text" placeholder="E-mail, celular, CPF, CNPJ ou chave aleatória"></div>
+                <div class="field"><label for="facebook">Facebook</label><input id="facebook" type="text" placeholder="facebook.com/seunegocio"></div>
+                <div class="field"><label for="instagram">Instagram</label><input id="instagram" type="text" placeholder="@seunegocio ou instagram.com/seunegocio"></div>
+              </div>
+              <div class="form-actions"><button id="saveProfile" class="primary">Salvar perfil</button><button id="editProfile" class="ghost" type="button">Editar perfil</button></div>
+              <div id="profileStatus" class="status" role="status"></div>
+            </div>
+          </div>
+        </div>
+        <div id="profilePixCard" class="profile-pix-card">
+          <div class="profile-pix-layout">
+            <img id="profileQrImage" alt="QR Code PIX da chave cadastrada">
+            <div>
+              <span class="eyebrow">🔑 PIX cadastrado</span>
+              <h3 style="margin-top:12px">QR Code da chave PIX</h3>
+              <p class="pix-help">Este QR Code permite que o cliente faça um pagamento PIX informando o valor no aplicativo do banco.</p>
+              <textarea id="profilePixPayload" class="profile-pix-copy" readonly aria-label="Código PIX copia e cola"></textarea>
+              <p id="profilePixKeyLabel" class="pix-help" style="margin-top:9px;margin-bottom:0">Chave usada no QR Code: —</p>
+              <div class="form-actions" style="margin-top:14px"><button id="generateProfilePix" class="primary" type="button">Gerar QR Code</button><button id="copyProfilePix" class="ghost" type="button">Copiar código PIX</button></div>
+              <div id="profilePixStatus" class="status"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="products" class="screen" aria-labelledby="productsTitle">
+        <div class="page-header"><span class="eyebrow">🥩 Cardápio</span><h2 id="productsTitle">Cadastro de produtos</h2><p>Cadastre comidas e bebidas com seus valores para usar na tela de vendas.</p></div>
+        <div class="content-card">
+          <div class="product-form">
+            <div class="field"><label for="productName">Nome do produto *</label><input id="productName" type="text" placeholder="Ex.: Hambúrguer artesanal"></div>
+            <div class="field"><label for="productCategory">Categoria *</label><select id="productCategory"><option value="Comida">Comida</option><option value="Bebidas">Bebidas</option></select></div>
+            <div class="field"><label for="productPrice">Valor (R$) *</label><input id="productPrice" type="number" min="0.01" step="0.01" placeholder="0,00"></div>
+            <button id="addProduct" class="primary">Cadastrar produto</button>
+          </div>
+          <div id="productStatus" class="status"></div>
+          <div id="productList" class="product-list"></div>
+        </div>
+      </section>
+
+      <section id="sale" class="screen" aria-labelledby="saleTitle">
+        <div class="page-header"><span class="eyebrow">🧾 Atendimento</span><h2 id="saleTitle">Tela de vendas</h2><p>Selecione os itens, ajuste as quantidades e confirme o pedido.</p></div>
+        <div class="sale-layout">
+          <div id="saleProducts" class="product-picker"></div>
+          <aside class="panel">
+            <h3>Pedido atual</h3>
+            <div id="orderLines" class="order-lines"></div>
+            <div class="order-total"><span>Total</span><strong id="orderTotal">R$ 0,00</strong></div>
+            <button id="confirmSale" class="primary" style="width:100%;margin-top:18px">Confirmar venda</button>
+            <div id="saleStatus" class="status"></div>
+          </aside>
+        </div>
+        <div class="history"><div class="section-heading"><div><h3>Vendas concluídas</h3><p>Histórico das vendas feitas neste dispositivo.</p></div></div><div id="salesHistory" class="history-list"></div></div>
+      </section>
+
+      <div id="paymentMethodModal" class="payment-method-modal" role="dialog" aria-modal="true" aria-labelledby="paymentMethodTitle">
+        <div class="payment-method-card">
+          <button id="closePaymentMethods" class="payment-method-close" type="button" aria-label="Fechar">×</button>
+          <span class="eyebrow">💳 Finalizar pedido</span>
+          <h2 id="paymentMethodTitle">Como o cliente vai pagar?</h2>
+          <p>Escolha a forma de pagamento para registrar a venda.</p>
+          <div class="payment-method-total"><span>Total do pedido</span><strong id="paymentMethodTotal">R$ 0,00</strong></div>
+          <div class="payment-method-options">
+            <button type="button" class="payment-method-option" data-payment-method="PIX"><span class="method-symbol">▦</span><span><strong>PIX</strong><small>Gerar QR Code</small></span><b>›</b></button>
+            <button type="button" class="payment-method-option" data-payment-method="Cartão de Débito"><span class="method-symbol">💳</span><span><strong>Cartão de Débito</strong><small>Pagamento no débito</small></span><b>›</b></button>
+            <button type="button" class="payment-method-option" data-payment-method="Cartão de Crédito"><span class="method-symbol">💳</span><span><strong>Cartão de Crédito</strong><small>Pagamento no crédito</small></span><b>›</b></button>
+            <button type="button" class="payment-method-option" data-payment-method="Dinheiro"><span class="method-symbol">💵</span><span><strong>Dinheiro</strong><small>Pagamento em espécie</small></span><b>›</b></button>
+          </div>
+          <div id="paymentMethodStatus" class="status" role="status"></div>
+          <button id="cancelPaymentChoice" class="ghost payment-choice-cancel" type="button">Voltar ao pedido</button>
+        </div>
+      </div>
+
+      <section id="inventory" class="screen" aria-labelledby="inventoryTitle">
+        <div class="page-header"><span class="eyebrow">📦 Controle de estoque</span><h2 id="inventoryTitle">Entrada e saída de material</h2><p>Registre os materiais recebidos e usados no estabelecimento.</p></div>
+        <div class="content-card">
+          <div class="inventory-actions">
+            <button id="entryMaterialButton" class="primary active">Entrada de material</button>
+            <button id="exitMaterialButton" class="secondary">Saída de material</button>
+            <button id="showInventoryReport" class="ghost">Imprimir relatório</button>
+          </div>
+          <div id="materialFormTitle" style="font-weight:900;font-size:18px;margin:5px 0 17px">Registrar entrada de material</div>
+          <div class="material-form">
+            <div class="field barcode-field"><label for="materialBarcode">Código de barras *</label><input id="materialBarcode" type="text" inputmode="numeric" autocomplete="off" placeholder="Use o leitor e pressione Enter"><div class="barcode-status">Leitor USB/Bluetooth funciona como teclado.</div></div>
+            <div class="field"><label for="materialName">Nome do material *</label><input id="materialName" type="text" placeholder="Preenchido após a leitura"></div>
+            <div class="field"><label for="materialQuantity">Quantidade *</label><input id="materialQuantity" type="number" min="0.01" step="0.01" placeholder="0"></div>
+            <div class="field"><label for="materialUnit">Unidade</label><select id="materialUnit"><option value="unidade">Unidade</option><option value="kg">Kg</option><option value="g">Gramas</option><option value="ml">Mililitros</option><option value="litro">Litro</option><option value="caixa">Caixa</option><option value="pacote">Pacote</option></select></div>
+            <button id="saveMaterialMovement" class="primary">Registrar entrada</button>
+          </div>
+          <div class="form-actions" style="margin-top:14px"><button id="openBarcodeCamera" class="secondary" type="button">📷 Ler pela câmera</button><button id="focusBarcode" class="ghost" type="button">▣ Ativar leitor</button></div>
+          <div id="barcodeScannerBox" class="scanner-box"><video id="barcodeVideo" playsinline muted></video><p>Aponte a câmera para o código de barras. O aplicativo preencherá o campo automaticamente.</p><button id="stopBarcodeCamera" class="ghost" type="button">Fechar câmera</button></div>
+          <div id="materialStatus" class="status"></div>
+          <div class="section-heading" style="margin-top:22px"><div><h3>Movimentações recentes</h3><p>Os dados ficam salvos neste dispositivo.</p></div></div>
+          <div id="materialHistory" class="material-history"></div>
+        </div>
+        <div id="inventoryReportView" class="inventory-report-view">
+          <div class="inventory-report-head"><h3>Relatório de entrada e saída</h3><p id="inventoryReportDate">Data e horário de emissão: —</p></div>
+          <table class="inventory-table"><thead><tr><th>Material</th><th>Código</th><th>Entrou</th><th>Saiu</th><th>Restou</th><th>Unidade</th></tr></thead><tbody id="inventoryReportRows"></tbody></table>
+          <div class="inventory-report-total"><span>Total de materiais</span><strong id="inventoryReportCount">0</strong></div>
+          <div class="report-actions"><button id="sendInventoryWhatsapp" class="primary">Enviar via WhatsApp</button><button id="printInventoryReport" class="secondary">Imprimir</button><button id="saveInventoryReport" class="ghost">Salvar PDF</button></div>
+          <div id="inventoryReportStatus" class="status"></div>
+        </div>
+      </section>
+
+      <section id="payment" class="screen" aria-labelledby="paymentTitle">
+        <div class="qr-screen">
+          <div class="qr-card">
+            <span id="paymentTypeLabel" class="eyebrow">💳 Pagamento PIX</span>
+            <h2 id="paymentTitle">QR Code da venda</h2>
+            <div class="amount" id="paymentAmount">R$ 0,00</div>
+            <img id="qrImage" alt="QR Code para pagamento PIX">
+            <p id="pixPaymentHint" style="color:var(--muted);margin:0 0 8px">Aponte a câmera do banco para pagar.</p>
+            <textarea id="pixPayload" class="pix-copy" readonly aria-label="Código PIX copia e cola"></textarea>
+            <div id="paymentActions" class="qr-actions"><button id="completeSale" class="primary">Concluir</button><button id="backToSale" class="secondary">Voltar</button><button id="cancelSale" class="ghost">Cancelar</button></div>
+            <div id="postSaleActions" class="qr-actions" style="display:none"><button id="printOrder" class="primary">🖨️ Imprimir pedido</button><button id="returnAfterPrint" class="secondary">Voltar para vendas</button></div>
+            <div id="orderReceipt" class="order-receipt"></div>
+            <div id="paymentStatus" class="status"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="reports" class="screen" aria-labelledby="reportsTitle">
+        <div class="page-header"><span class="eyebrow">📊 Fechamento</span><h2 id="reportsTitle">Relatório do dia</h2><p>Confira todas as vendas concluídas hoje, com data, horário, quantidades e total.</p></div>
+        <div class="reports-grid">
+          <div id="reportPreview" class="report-preview"></div>
+          <aside class="panel">
+            <h3>Opções do relatório</h3>
+            <p class="small-note">O relatório é atualizado automaticamente com as vendas concluídas neste dia.</p>
+            <div class="report-actions" style="display:grid"><button id="sendWhatsapp" class="primary">Enviar via WhatsApp</button><button id="printReport" class="secondary">Imprimir</button><button id="saveReport" class="ghost">Salvar PDF</button></div>
+            <div id="reportStatus" class="status"></div>
+          </aside>
+        </div>
+      </section>
+    </main>
+    <footer>Aplicativo demonstrativo · Churrasco e Hamburguer</footer>
+  </div>
+  <div id="toast" class="toast" role="status"></div>
+
+  <script>
+    const $ = (selector) => document.querySelector(selector);
+    const BURGER_ICON = '<svg class="brand-icon" viewBox="0 0 100 100" aria-hidden="true"><path d="M22 46c1-15 12-25 28-25s27 10 28 25H22zm-2 8h60v8H20zm7 13h46c-2 11-10 16-23 16S29 78 27 67z"/><circle cx="41" cy="31" r="2.2"/><circle cx="50" cy="28" r="2.2"/><circle cx="59" cy="31" r="2.2"/></svg>';
+    const screens = document.querySelectorAll('.screen');
+    const navButtons = document.querySelectorAll('.nav-button');
+    const PROFILE_KEY = 'lanchonetePerfil';
+    const PRODUCTS_KEY = 'lanchoneteProdutos';
+    const PRODUCTS_SYNC_KEY = 'lanchoneteProdutosUpdatedAt';
+    const SALES_KEY = 'lanchoneteVendas';
+    const MOVEMENTS_KEY = 'lanchoneteMovimentos';
+    const BALANCES_KEY = 'lanchoneteSaldos';
+    const MATERIALS_KEY = 'lanchoneteMateriais';
+    const PAYMENT_METHODS = ['PIX', 'Cartão de Débito', 'Cartão de Crédito', 'Dinheiro'];
+    const PHOTO_DB_NAME = 'lanchoneteFotosDB';
+    const PHOTO_STORE_NAME = 'fotos';
+    const PHOTO_ID = 'foto-perfil';
+    const profileFields = ['businessName', 'email', 'pixKeyType', 'pixKey', 'facebook', 'instagram'];
+    let photoData = '';
+    let products = [];
+    let sales = [];
+    let materialMovements = [];
+    let materialBalances = {};
+    let materialCatalog = {};
+    let barcodeStream = null;
+    let barcodeAnimation = null;
+    let currentOrder = {};
+    let pendingSale = null;
+    let completedSaleForPrint = null;
+    let materialMode = 'entrada';
+
+    const money = (value) => Number(value || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    const escapeHtml = (value) => String(value ?? '').replace(/[&<>'"]/g, char => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', "'":'&#39;', '"':'&quot;' }[char]));
+    const todayKey = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); };
+    const formatDateTime = (date) => new Date(date).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
+    const showToast = (message) => { const toast = $('#toast'); toast.textContent = message; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2800); };
+
+    function showScreen(id) {
+      screens.forEach(screen => screen.classList.toggle('active', screen.id === id));
+      navButtons.forEach(button => button.classList.toggle('active', button.dataset.screen === id));
+      if (id === 'sale') renderSale();
+      if (id === 'products') renderProducts();
+      if (id === 'inventory') renderInventory();
+      if (id === 'reports') renderReport();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    document.querySelectorAll('[data-go]').forEach(button => button.addEventListener('click', () => showScreen(button.dataset.go)));
+    navButtons.forEach(button => button.addEventListener('click', () => showScreen(button.dataset.screen)));
+
+    function normaliseUrl(value, platform) {
+      if (!value) return '';
+      let clean = value.trim();
+      if (platform === 'instagram' && clean.startsWith('@')) clean = clean.slice(1);
+      if (!/^https?:\/\//i.test(clean)) {
+        if (platform === 'instagram' && !clean.includes('.')) clean = 'https://instagram.com/' + clean;
+        else if (platform === 'facebook' && !clean.includes('.')) clean = 'https://facebook.com/' + clean;
+        else clean = 'https://' + clean;
+      }
+      return clean;
+    }
+    function getProfile() { return { businessName: $('#businessName').value.trim(), email: $('#email').value.trim(), pixKeyType: $('#pixKeyType').value, pixKey: $('#pixKey').value.trim(), facebook: $('#facebook').value.trim(), instagram: $('#instagram').value.trim(), photo: photoData }; }
+    function renderPhoto() { $('#avatarPreview').innerHTML = photoData ? '<img alt="Foto do estabelecimento" src="' + photoData + '">' : BURGER_ICON; }
+    function compressImageData(source, maxSide = 1200, quality = .82) {
+      return new Promise((resolve, reject) => {
+        const image = new Image();
+        image.onload = () => {
+          const longest = Math.max(image.naturalWidth || image.width, image.naturalHeight || image.height);
+          const scale = Math.min(1, maxSide / longest);
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.max(1, Math.round((image.naturalWidth || image.width) * scale));
+          canvas.height = Math.max(1, Math.round((image.naturalHeight || image.height) * scale));
+          const context = canvas.getContext('2d');
+          context.fillStyle = '#ffffff'; context.fillRect(0, 0, canvas.width, canvas.height);
+          context.drawImage(image, 0, 0, canvas.width, canvas.height);
+          const optimized = canvas.toDataURL('image/jpeg', quality);
+          if (optimized.length > 600000 && maxSide > 700) { compressImageData(source, 700, .62).then(resolve).catch(reject); return; }
+          resolve(optimized);
+        };
+        image.onerror = () => reject(new Error('image-load'));
+        image.src = source;
+      });
+    }
+
+    function openPhotoDb() {
+      return new Promise((resolve, reject) => {
+        if (!window.indexedDB) { reject(new Error('indexeddb-unavailable')); return; }
+        const request = indexedDB.open(PHOTO_DB_NAME, 1);
+        request.onupgradeneeded = () => { if (!request.result.objectStoreNames.contains(PHOTO_STORE_NAME)) request.result.createObjectStore(PHOTO_STORE_NAME); };
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error || new Error('photo-db-error'));
+      });
+    }
+    function dataUrlToBlob(dataUrl) {
+      const parts = dataUrl.split(','); const mime = (parts[0].match(/data:([^;]+)/) || [,'image/jpeg'])[1];
+      const binary = atob(parts[1]); const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+      return new Blob([bytes], { type: mime });
+    }
+    async function savePhotoToDevice(dataUrl) {
+      const db = await openPhotoDb();
+      const transaction = db.transaction(PHOTO_STORE_NAME, 'readwrite');
+      transaction.objectStore(PHOTO_STORE_NAME).put(dataUrlToBlob(dataUrl), PHOTO_ID);
+      return new Promise((resolve, reject) => { transaction.oncomplete = () => { db.close(); resolve(); }; transaction.onerror = () => { db.close(); reject(transaction.error || new Error('photo-save-error')); }; });
+    }
+    async function loadPhotoFromDevice() {
+      const db = await openPhotoDb();
+      const request = db.transaction(PHOTO_STORE_NAME, 'readonly').objectStore(PHOTO_STORE_NAME).get(PHOTO_ID);
+      return new Promise((resolve, reject) => {
+        request.onsuccess = () => { db.close(); if (!request.result) { resolve(''); return; } const reader = new FileReader(); reader.onload = () => resolve(reader.result); reader.onerror = reject; reader.readAsDataURL(request.result); };
+        request.onerror = () => { db.close(); reject(request.error || new Error('photo-load-error')); };
+      });
+    }
+    async function deletePhotoFromDevice() {
+      const db = await openPhotoDb();
+      const transaction = db.transaction(PHOTO_STORE_NAME, 'readwrite'); transaction.objectStore(PHOTO_STORE_NAME).delete(PHOTO_ID);
+      return new Promise((resolve, reject) => { transaction.oncomplete = () => { db.close(); resolve(); }; transaction.onerror = () => { db.close(); reject(transaction.error || new Error('photo-delete-error')); }; });
+    }
+    function renderProfile(profile) {
+      if (!profile || !profile.businessName) return;
+      $('#headerName').textContent = 'Churrasco e Hamburguer';
+      $('#homeProfileCard').classList.add('visible');
+      $('#homeProfileName').textContent = profile.businessName;
+      $('#homeProfileEmail').textContent = profile.email || 'E-mail não informado';
+      $('#homeBusinessWord').textContent = 'Churrasco e Hamburguer.';
+      $('#homeLead').textContent = profile.pixKey ? 'Perfil configurado. Faça suas vendas e receba por PIX com praticidade.' : 'Perfil configurado. Adicione uma chave PIX para gerar QR Codes de pagamento.';
+      $('#headerLogo').innerHTML = profile.photo ? '<img alt="Logo" src="' + profile.photo + '">' : BURGER_ICON;
+      $('#homeLogo').innerHTML = profile.photo ? '<img alt="Logo do estabelecimento" src="' + profile.photo + '">' : BURGER_ICON;
+      $('#homeAvatar').innerHTML = profile.photo ? '<img alt="Foto do estabelecimento" src="' + profile.photo + '">' : BURGER_ICON;
+      const pills = [];
+      if (profile.pixKey) pills.push('<span class="info-pill">🔑 PIX: ' + escapeHtml(profile.pixKey) + '</span>');
+      if (profile.email) pills.push('<span class="info-pill">✉️ ' + escapeHtml(profile.email) + '</span>');
+      $('#homeInfoPills').innerHTML = pills.join('');
+      const links = [];
+      if (profile.facebook) links.push('<a target="_blank" rel="noopener" href="' + escapeHtml(normaliseUrl(profile.facebook, 'facebook')) + '">Facebook ↗</a>');
+      if (profile.instagram) links.push('<a target="_blank" rel="noopener" href="' + escapeHtml(normaliseUrl(profile.instagram, 'instagram')) + '">Instagram ↗</a>');
+      $('#homeSocialLinks').innerHTML = links.join('');
+      renderProfilePix(profile);
+    }
+    function setQrImage(image, payload, onFail) {
+      let fallbackUsed = false;
+      image.onerror = () => {
+        if (!fallbackUsed) { fallbackUsed = true; image.src = 'https://quickchart.io/qr?size=260&text=' + encodeURIComponent(payload); }
+        else if (onFail) onFail();
+      };
+      image.src = 'https://api.qrserver.com/v1/create-qr-code/?size=260x260&margin=10&data=' + encodeURIComponent(payload);
+    }
+    function renderProfilePix(profile, manual = false) {
+      if (!profile || !profile.pixKey) { $('#profilePixCard').classList.remove('visible'); return; }
+      const key = pixKeyInfo(profile.pixKey, profile.pixKeyType || 'auto');
+      if (!key.valid) { $('#profilePixCard').classList.add('visible'); $('#profilePixStatus').style.color = 'var(--red)'; $('#profilePixStatus').textContent = key.error; return; }
+      const pixProfile = { ...profile, pixKey: key.value };
+      const payload = pixPayload(pixProfile, null);
+      $('#profilePixCard').classList.add('visible');
+      setQrImage($('#profileQrImage'), payload, () => { $('#profilePixStatus').style.color = 'var(--red)'; $('#profilePixStatus').textContent = 'Não foi possível carregar a imagem. Use o código PIX copia e cola.'; });
+      $('#profilePixPayload').value = payload;
+      $('#profilePixKeyLabel').textContent = 'Chave usada no QR Code (' + key.label + '): ' + key.value;
+      $('#profilePixStatus').style.color = 'var(--green)'; $('#profilePixStatus').textContent = manual ? 'QR Code gerado com sucesso para a chave cadastrada.' : 'QR Code pronto para compartilhar com seus clientes.';
+    }
+    async function loadProfile() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(PROFILE_KEY) || 'null');
+        if (!saved) { $('#businessName').value = 'Churrasco e Hamburguer'; return; }
+        if (saved.businessName === 'Lanchonete & Pizzaria' || saved.businessName === 'Churrasco e Hamburgueria') { saved.businessName = 'Churrasco e Hamburguer'; try { localStorage.setItem(PROFILE_KEY, JSON.stringify(saved)); } catch (migrationError) {} }
+        profileFields.forEach(id => { if (saved[id]) $('#' + id).value = saved[id]; });
+        if (saved.photo) {
+          try {
+            if (saved.photo.length > 600000) saved.photo = await compressImageData(saved.photo, 900, .66);
+            await savePhotoToDevice(saved.photo);
+            saved.photo = '';
+            localStorage.setItem(PROFILE_KEY, JSON.stringify(saved));
+          } catch (migrationError) {}
+        }
+        try { photoData = await loadPhotoFromDevice(); } catch (photoError) { photoData = saved.photo || ''; }
+        renderPhoto();
+        renderProfile({ ...saved, photo: photoData });
+      } catch (error) { console.warn('Não foi possível carregar o perfil salvo.'); }
+    }
+    $('#photoInput').addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = async () => {
+        $('#profileStatus').style.color = 'var(--muted)'; $('#profileStatus').textContent = 'Preparando a foto para salvar...';
+        try { photoData = await compressImageData(reader.result, 1400, .84); renderPhoto(); $('#profileStatus').style.color = 'var(--green)'; $('#profileStatus').textContent = 'Foto pronta. Clique em Salvar perfil.'; }
+        catch (error) { photoData = ''; renderPhoto(); $('#profileStatus').style.color = 'var(--red)'; $('#profileStatus').textContent = 'Não foi possível processar esta imagem. Escolha outra foto.'; }
+      };
+      reader.readAsDataURL(file);
+    });
+    $('#saveProfile').addEventListener('click', async () => {
+      let profile = getProfile();
+      if (!profile.businessName) { $('#profileStatus').style.color = 'var(--red)'; $('#profileStatus').textContent = 'Informe o nome do estabelecimento para salvar.'; $('#businessName').focus(); return; }
+      if (profile.pixKey) {
+        const key = pixKeyInfo(profile.pixKey, profile.pixKeyType || 'auto');
+        if (!key.valid) { $('#profileStatus').style.color = 'var(--red)'; $('#profileStatus').textContent = key.error; $('#pixKey').focus(); return; }
+        profile.pixKey = key.value; profile.pixKeyType = key.type; $('#pixKey').value = key.value; $('#pixKeyType').value = key.type;
+      }
+      $('#profileStatus').style.color = 'var(--muted)'; $('#profileStatus').textContent = 'Salvando perfil...';
+      try {
+        if (profile.photo) {
+          if (profile.photo.length > 600000) { photoData = await compressImageData(profile.photo, 900, .66); profile.photo = photoData; renderPhoto(); }
+          try { await savePhotoToDevice(profile.photo); profile.photo = ''; }
+          catch (photoError) { if (profile.photo.length > 600000) throw photoError; }
+        } else {
+          try { await deletePhotoFromDevice(); } catch (photoError) {}
+        }
+        localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
+        renderProfile({ ...profile, photo: photoData });
+        $('#profileStatus').style.color = 'var(--green)'; $('#profileStatus').textContent = 'Perfil salvo! A foto foi armazenada com qualidade e as informações já aparecem na tela inicial.'; showToast('Perfil salvo com sucesso');
+      } catch (error) {
+        $('#profileStatus').style.color = 'var(--red)'; $('#profileStatus').textContent = 'Não foi possível armazenar a foto neste dispositivo. Tente novamente.';
+      }
+    });
+    $('#editProfile').addEventListener('click', () => { $('#pixKey').focus(); $('#profileStatus').style.color = 'var(--muted)'; $('#profileStatus').textContent = 'Edite a chave PIX ou outros dados e clique em Salvar perfil para atualizar o QR Code.'; });
+    $('#pixKey').addEventListener('input', () => {
+      const saved = JSON.parse(localStorage.getItem(PROFILE_KEY) || 'null');
+      if (saved && saved.pixKey !== $('#pixKey').value.trim()) { $('#profilePixStatus').style.color = 'var(--muted)'; $('#profilePixStatus').textContent = 'A chave foi alterada. Clique em Salvar perfil para gerar o QR Code da nova chave.'; }
+    });
+    $('#generateProfilePix').addEventListener('click', () => {
+      const profile = getProfile();
+      const saved = JSON.parse(localStorage.getItem(PROFILE_KEY) || 'null');
+      const key = pixKeyInfo(profile.pixKey, profile.pixKeyType || 'auto');
+      if (!key.valid) { $('#profilePixStatus').style.color = 'var(--red)'; $('#profilePixStatus').textContent = key.error; return; }
+      const savedKey = saved && saved.pixKey ? pixKeyInfo(saved.pixKey, saved.pixKeyType || 'auto') : null;
+      if (!saved || !savedKey || !savedKey.valid || savedKey.value !== key.value) { $('#profilePixStatus').style.color = 'var(--red)'; $('#profilePixStatus').textContent = 'Salve o perfil para atualizar o QR Code com a nova chave PIX.'; return; }
+      renderProfilePix({ ...saved, pixKey: savedKey.value, pixKeyType: savedKey.type }, true);
+    });
+    $('#copyProfilePix').addEventListener('click', async () => {
+      const value = $('#profilePixPayload').value;
+      if (!value) return;
+      try { await navigator.clipboard.writeText(value); } catch (error) { $('#profilePixPayload').select(); document.execCommand('copy'); }
+      $('#profilePixStatus').style.color = 'var(--green)'; $('#profilePixStatus').textContent = 'Código PIX copiado.'; showToast('Código PIX copiado');
+    });
+
+    function readLocalJson(key, fallback) {
+      try { const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; }
+      catch (error) { return fallback; }
+    }
+    function loadData() {
+      products = readLocalJson(PRODUCTS_KEY, []);
+      sales = readLocalJson(SALES_KEY, []);
+      materialMovements = readLocalJson(MOVEMENTS_KEY, []);
+      materialBalances = readLocalJson(BALANCES_KEY, {});
+      materialCatalog = readLocalJson(MATERIALS_KEY, {});
+    }
+    async function saveProductsToDevice(items, savedAt) {
+      const db = await openPhotoDb();
+      return new Promise((resolve, reject) => {
+        const transaction = db.transaction(PHOTO_STORE_NAME, 'readwrite');
+        transaction.objectStore(PHOTO_STORE_NAME).put({ items, savedAt }, PRODUCTS_KEY);
+        transaction.oncomplete = () => { db.close(); resolve(true); };
+        transaction.onerror = () => { db.close(); reject(transaction.error || new Error('products-save-error')); };
+        transaction.onabort = () => { db.close(); reject(transaction.error || new Error('products-save-aborted')); };
+      });
+    }
+    async function loadProductsFromDevice() {
+      const db = await openPhotoDb();
+      return new Promise((resolve, reject) => {
+        const request = db.transaction(PHOTO_STORE_NAME, 'readonly').objectStore(PHOTO_STORE_NAME).get(PRODUCTS_KEY);
+        request.onsuccess = () => { db.close(); resolve(request.result || null); };
+        request.onerror = () => { db.close(); reject(request.error || new Error('products-load-error')); };
+      });
+    }
+    async function saveProducts() {
+      const snapshot = products.map(product => ({ ...product }));
+      const savedAt = Date.now();
+      let localSaved = false;
+      try {
+        localStorage.setItem(PRODUCTS_KEY, JSON.stringify(snapshot));
+        localStorage.setItem(PRODUCTS_SYNC_KEY, String(savedAt));
+        localSaved = true;
+      } catch (error) {}
+      let deviceSaved = false;
+      try { await saveProductsToDevice(snapshot, savedAt); deviceSaved = true; } catch (error) {}
+      return localSaved || deviceSaved;
+    }
+    async function restoreProductsFromDevice() {
+      try {
+        const backup = await loadProductsFromDevice();
+        if (!backup || !Array.isArray(backup.items)) return;
+        const localSavedAt = Number(localStorage.getItem(PRODUCTS_SYNC_KEY) || 0);
+        if (Number(backup.savedAt || 0) >= localSavedAt) {
+          products = backup.items;
+          try { localStorage.setItem(PRODUCTS_KEY, JSON.stringify(products)); localStorage.setItem(PRODUCTS_SYNC_KEY, String(backup.savedAt || Date.now())); } catch (error) {}
+          renderProducts(); renderSale();
+        } else {
+          await saveProductsToDevice(products, localSavedAt || Date.now());
+        }
+      } catch (error) {}
+    }
+    function saveSales() { localStorage.setItem(SALES_KEY, JSON.stringify(sales)); }
+    function saveInventory() { localStorage.setItem(MOVEMENTS_KEY, JSON.stringify(materialMovements)); localStorage.setItem(BALANCES_KEY, JSON.stringify(materialBalances)); localStorage.setItem(MATERIALS_KEY, JSON.stringify(materialCatalog)); }
+    function productIcon(category) { return category === 'Bebidas' ? '🥤' : '🍽️'; }
+
+    $('#addProduct').addEventListener('click', async () => {
+      const name = $('#productName').value.trim();
+      const category = $('#productCategory').value;
+      const price = Number($('#productPrice').value);
+      if (!name || !price || price <= 0) { $('#productStatus').style.color = 'var(--red)'; $('#productStatus').textContent = 'Preencha o nome e um valor maior que zero.'; return; }
+      products.push({ id: Date.now().toString() + '-' + Math.random().toString(36).slice(2, 7), name, category, price: Number(price.toFixed(2)) });
+      const productSaved = await saveProducts(); renderProducts(); renderSale();
+      $('#productName').value = ''; $('#productPrice').value = '';
+      $('#productStatus').style.color = productSaved ? 'var(--green)' : 'var(--red)'; $('#productStatus').textContent = productSaved ? 'Produto cadastrado e salvo neste dispositivo.' : 'Produto adicionado, mas não foi possível salvar. Verifique o espaço disponível no navegador.';
+      showToast('Produto cadastrado');
+    });
+    function renderProducts() {
+      const list = $('#productList');
+      if (!products.length) { list.innerHTML = '<div class="empty">Nenhum produto cadastrado. Use o formulário acima para adicionar comidas e bebidas.</div>'; return; }
+      list.innerHTML = products.map(product => '<div class="registered-product"><div><strong>' + productIcon(product.category) + ' ' + escapeHtml(product.name) + '</strong><span class="category-badge">' + escapeHtml(product.category) + '</span><p>Disponível na tela de vendas</p></div><div class="product-right"><strong class="price">' + money(product.price) + '</strong><button class="danger remove-product" data-id="' + escapeHtml(product.id) + '">Excluir</button></div></div>').join('');
+      document.querySelectorAll('.remove-product').forEach(button => button.addEventListener('click', async () => {
+        const id = String(button.dataset.id);
+        products = products.filter(product => String(product.id) !== id);
+        const productSaved = await saveProducts();
+        renderProducts(); renderSale();
+        if (productSaved) showToast('Produto excluído');
+        else { $('#productStatus').style.color = 'var(--red)'; $('#productStatus').textContent = 'Produto removido da lista, mas não foi possível salvar a alteração neste dispositivo.'; }
+      }));
+    }
+
+    function setMaterialMode(mode) {
+      materialMode = mode;
+      const entry = mode === 'entrada';
+      $('#entryMaterialButton').classList.toggle('active', entry);
+      $('#exitMaterialButton').classList.toggle('active', !entry);
+      $('#materialFormTitle').textContent = entry ? 'Registrar entrada de material' : 'Registrar saída de material';
+      $('#saveMaterialMovement').textContent = entry ? 'Registrar entrada' : 'Registrar saída';
+      $('#saveMaterialMovement').className = entry ? 'primary' : 'danger';
+      $('#materialStatus').textContent = '';
+      $('#materialBarcode').focus();
+    }
+    function materialKey(name, barcode) { return barcode ? 'barcode:' + barcode : 'name:' + name.trim().toLowerCase(); }
+    function fillMaterialFromBarcode() {
+      const barcode = $('#materialBarcode').value.trim();
+      const found = materialCatalog[barcode];
+      if (found) {
+        $('#materialName').value = found.name;
+        $('#materialUnit').value = found.unit || 'unidade';
+        $('#materialStatus').style.color = 'var(--green)'; $('#materialStatus').textContent = 'Material localizado: ' + found.name + '.';
+      } else if (barcode) {
+        $('#materialStatus').style.color = 'var(--muted)'; $('#materialStatus').textContent = 'Código novo. Informe o nome do material para cadastrá-lo.';
+      }
+    }
+    $('#entryMaterialButton').addEventListener('click', () => setMaterialMode('entrada'));
+    $('#exitMaterialButton').addEventListener('click', () => setMaterialMode('saida'));
+    $('#materialBarcode').addEventListener('change', fillMaterialFromBarcode);
+    $('#materialBarcode').addEventListener('keydown', event => { if (event.key === 'Enter') { event.preventDefault(); fillMaterialFromBarcode(); $('#materialQuantity').focus(); } });
+    $('#focusBarcode').addEventListener('click', () => { $('#materialBarcode').focus(); $('#materialStatus').style.color = 'var(--muted)'; $('#materialStatus').textContent = 'Leitor ativado. Passe o código e aguarde o preenchimento.'; });
+    $('#saveMaterialMovement').addEventListener('click', () => {
+      const barcode = $('#materialBarcode').value.trim();
+      const name = $('#materialName').value.trim();
+      const quantity = Number($('#materialQuantity').value);
+      const unit = $('#materialUnit').value;
+      if (!barcode) { $('#materialStatus').style.color = 'var(--red)'; $('#materialStatus').textContent = 'Leia o código de barras antes de registrar o material.'; $('#materialBarcode').focus(); return; }
+      if (!name || !quantity || quantity <= 0) { $('#materialStatus').style.color = 'var(--red)'; $('#materialStatus').textContent = 'Informe o nome e uma quantidade maior que zero.'; return; }
+      const current = getInventoryRows().find(row => row.barcode === barcode || row.name.toLowerCase() === name.toLowerCase());
+      if (materialMode === 'saida' && (!current || quantity > current.balance)) { $('#materialStatus').style.color = 'var(--red)'; $('#materialStatus').textContent = !current ? 'Código não encontrado no estoque. Registre uma entrada primeiro.' : 'A saída não pode ser maior que o saldo atual (' + current.balance + ' ' + current.unit + ').'; return; }
+      materialCatalog[barcode] = { name, unit };
+      materialMovements.push({ id: 'MOV-' + Date.now(), barcode, name, quantity: Number(quantity.toFixed(2)), unit, type: materialMode, at: new Date().toISOString() });
+      saveInventory(); renderInventory(); $('#materialBarcode').value = ''; $('#materialName').value = ''; $('#materialQuantity').value = '';
+      $('#materialStatus').style.color = 'var(--green)'; $('#materialStatus').textContent = materialMode === 'entrada' ? 'Entrada registrada pelo código de barras.' : 'Saída registrada pelo código de barras.'; showToast(materialMode === 'entrada' ? 'Entrada registrada' : 'Saída registrada');
+      $('#materialBarcode').focus();
+    });
+    async function startBarcodeCamera() {
+      if (!('BarcodeDetector' in window) || !navigator.mediaDevices?.getUserMedia) { $('#materialStatus').style.color = 'var(--red)'; $('#materialStatus').textContent = 'A câmera não está disponível neste navegador. Use um leitor USB ou Bluetooth, que funciona como teclado.'; return; }
+      try {
+        barcodeStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' } }, audio: false });
+        const video = $('#barcodeVideo'); video.srcObject = barcodeStream; await video.play(); $('#barcodeScannerBox').classList.add('visible');
+        const detector = new BarcodeDetector({ formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128', 'code_39', 'itf', 'codabar'] });
+        const scan = async () => {
+          if (!barcodeStream) return;
+          try { const codes = await detector.detect(video); if (codes.length && codes[0].rawValue) { $('#materialBarcode').value = codes[0].rawValue; fillMaterialFromBarcode(); stopBarcodeCamera(); $('#materialQuantity').focus(); return; } } catch (error) {}
+          barcodeAnimation = requestAnimationFrame(scan);
+        };
+        scan();
+      } catch (error) { $('#materialStatus').style.color = 'var(--red)'; $('#materialStatus').textContent = 'Não foi possível abrir a câmera. Use o leitor USB ou Bluetooth.'; stopBarcodeCamera(); }
+    }
+    function stopBarcodeCamera() { if (barcodeAnimation) cancelAnimationFrame(barcodeAnimation); barcodeAnimation = null; if (barcodeStream) barcodeStream.getTracks().forEach(track => track.stop()); barcodeStream = null; $('#barcodeVideo').srcObject = null; $('#barcodeScannerBox').classList.remove('visible'); }
+    $('#openBarcodeCamera').addEventListener('click', startBarcodeCamera);
+    $('#stopBarcodeCamera').addEventListener('click', stopBarcodeCamera);
+    function getInventoryRows() {
+      const map = {};
+      Object.entries(materialBalances || {}).forEach(([storedKey, item]) => { const name = item.name || storedKey.replace(/^name:/, ''); const barcode = item.barcode || ''; const key = materialKey(name, barcode); map[key] = { name, barcode, unit: item.unit || 'unidade', balance: Number(item.quantity || 0), entered: 0, exited: 0 }; });
+      materialMovements.forEach(movement => {
+        let key = materialKey(movement.name, movement.barcode || '');
+        const nameKey = materialKey(movement.name, '');
+        if (!map[key] && map[nameKey]) key = nameKey;
+        if (!map[key]) map[key] = { name: movement.name, barcode: movement.barcode || '', unit: movement.unit || 'unidade', balance: 0, entered: 0, exited: 0 };
+        if (movement.type === 'entrada') { map[key].entered += movement.quantity; map[key].balance += movement.quantity; }
+        else { map[key].exited += movement.quantity; map[key].balance -= movement.quantity; }
+        map[key].unit = movement.unit || map[key].unit; map[key].barcode = movement.barcode || map[key].barcode;
+      });
+      return Object.values(map).filter(row => row.balance !== 0 || row.entered !== 0 || row.exited !== 0).sort((a, b) => a.name.localeCompare(b.name));
+    }
+    function renderInventory() {
+      const list = $('#materialHistory');
+      if (!materialMovements.length) list.innerHTML = '<div class="empty">Nenhuma movimentação pendente. O saldo salvo anteriormente aparece no relatório.</div>';
+      else list.innerHTML = materialMovements.slice().reverse().slice(0, 30).map(movement => '<div class="material-movement"><div><strong>' + (movement.type === 'entrada' ? '📥 ' : '📤 ') + escapeHtml(movement.name) + '</strong><p>' + formatDateTime(movement.at) + ' · Código: ' + escapeHtml(movement.barcode || 'não informado') + ' · ' + movement.quantity + ' ' + escapeHtml(movement.unit) + '</p></div><strong class="' + (movement.type === 'entrada' ? 'movement-in' : 'movement-out') + '">' + (movement.type === 'entrada' ? '+' : '−') + movement.quantity + ' ' + escapeHtml(movement.unit) + '</strong></div>').join('');
+      const rows = getInventoryRows();
+      $('#homeInventoryText').textContent = rows.length ? rows.length + ' material(is) com saldo controlado.' : 'Controle os materiais que entraram, saíram e restaram.';
+    }
+    function renderInventoryReport() {
+      const rows = getInventoryRows();
+      $('#inventoryReportDate').textContent = 'Data e horário de emissão: ' + formatDateTime(new Date());
+      $('#inventoryReportRows').innerHTML = rows.length ? rows.map(row => '<tr><td>' + escapeHtml(row.name) + '</td><td>' + escapeHtml(row.barcode || '—') + '</td><td>' + row.entered + '</td><td>' + row.exited + '</td><td><strong>' + row.balance + '</strong></td><td>' + escapeHtml(row.unit) + '</td></tr>').join('') : '<tr><td colspan="6" style="text-align:center;color:var(--muted)">Nenhum material cadastrado.</td></tr>';
+      $('#inventoryReportCount').textContent = rows.length;
+    }
+    $('#showInventoryReport').addEventListener('click', () => { renderInventoryReport(); $('#inventoryReportView').classList.add('visible'); $('#inventoryReportView').scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+    function inventoryReportLines() {
+      const rows = getInventoryRows();
+      return ['Relatorio de entrada e saida', 'Data e horario: ' + formatDateTime(new Date()), '', 'MATERIAL             CODIGO       ENTROU  SAIU  RESTOU', ...rows.map(row => row.name.slice(0, 19).padEnd(21, ' ') + (row.barcode || '—').slice(0, 12).padEnd(14, ' ') + String(row.entered).padStart(6, ' ') + String(row.exited).padStart(6, ' ') + String(row.balance).padStart(8, ' ') + ' ' + row.unit), '', 'Materiais controlados: ' + rows.length];
+    }
+    $('#sendInventoryWhatsapp').addEventListener('click', () => {
+      if (!getInventoryRows().length) { $('#inventoryReportStatus').style.color = 'var(--red)'; $('#inventoryReportStatus').textContent = 'Não há materiais para enviar.'; return; }
+      window.open('https://wa.me/?text=' + encodeURIComponent(inventoryReportLines().join('\\n')), '_blank', 'noopener'); $('#inventoryReportStatus').style.color = 'var(--green)'; $('#inventoryReportStatus').textContent = 'WhatsApp aberto com o relatório pronto para enviar.';
+    });
+    function printInventory() {
+      renderInventoryReport(); $('#inventoryReportView').classList.add('visible'); document.body.classList.add('print-inventory');
+      const finish = () => { document.body.classList.remove('print-inventory'); window.removeEventListener('afterprint', finish); };
+      window.addEventListener('afterprint', finish); window.print(); setTimeout(finish, 1600);
+    }
+    $('#printInventoryReport').addEventListener('click', printInventory);
+    $('#saveInventoryReport').addEventListener('click', () => {
+      const rows = getInventoryRows();
+      if (!rows.length) { $('#inventoryReportStatus').style.color = 'var(--red)'; $('#inventoryReportStatus').textContent = 'Não há materiais para salvar.'; return; }
+      const nextBalances = {}; rows.forEach(row => { nextBalances[materialKey(row.name, row.barcode)] = { name: row.name, barcode: row.barcode, quantity: row.balance, unit: row.unit }; });
+      downloadBlob(makePdf(inventoryReportLines()), 'relatorio-estoque-' + todayKey() + '.pdf');
+      materialBalances = nextBalances; materialMovements = []; saveInventory(); renderInventory(); renderInventoryReport();
+      $('#inventoryReportStatus').style.color = 'var(--green)'; $('#inventoryReportStatus').textContent = 'PDF salvo no dispositivo com a data e o horário. As movimentações foram arquivadas e os saldos restantes foram mantidos.'; showToast('PDF do relatório de estoque salvo');
+    });
+
+    function orderItems() { return products.filter(product => currentOrder[product.id]).map(product => ({ ...product, quantity: currentOrder[product.id] })); }
+    function orderTotal() { return orderItems().reduce((sum, item) => sum + item.price * item.quantity, 0); }
+    function renderSale() {
+      const picker = $('#saleProducts');
+      if (!products.length) { picker.innerHTML = '<div class="panel" style="grid-column:1/-1"><div class="empty">Nenhum produto cadastrado ainda. Vá em <strong>Produtos</strong> para cadastrar comidas e bebidas.</div><button class="secondary" data-go="products">Cadastrar produtos →</button></div>'; picker.querySelector('[data-go]')?.addEventListener('click', () => showScreen('products')); }
+      else {
+        picker.innerHTML = products.map(product => { const quantity = currentOrder[product.id] || 0; return '<article class="sale-product ' + (quantity ? 'selected' : '') + '"><div class="product-icon">' + productIcon(product.category) + '</div><h3>' + escapeHtml(product.name) + '</h3><p><span class="category-badge" style="margin-left:0">' + escapeHtml(product.category) + '</span></p><div class="sale-bottom"><span class="price">' + money(product.price) + '</span><div class="quantity"><button aria-label="Diminuir" data-action="minus" data-id="' + escapeHtml(product.id) + '">−</button><strong>' + quantity + '</strong><button aria-label="Adicionar" data-action="plus" data-id="' + escapeHtml(product.id) + '">+</button></div></div></article>'; }).join('');
+        picker.querySelectorAll('[data-action]').forEach(button => button.addEventListener('click', () => { const id = button.dataset.id; currentOrder[id] = Math.max(0, (currentOrder[id] || 0) + (button.dataset.action === 'plus' ? 1 : -1)); if (!currentOrder[id]) delete currentOrder[id]; renderSale(); }));
+      }
+      renderOrder(); renderHistory();
+    }
+    function renderOrder() {
+      const items = orderItems();
+      $('#orderLines').innerHTML = items.length ? items.map(item => '<div class="order-line"><span>' + item.quantity + 'x ' + escapeHtml(item.name) + '<small>' + money(item.price) + ' cada</small></span><strong>' + money(item.price * item.quantity) + '</strong></div>').join('') : '<div class="empty">Nenhum item selecionado.<br>Escolha os produtos ao lado.</div>';
+      $('#orderTotal').textContent = money(orderTotal());
+    }
+    function renderHistory() {
+      const list = $('#salesHistory');
+      if (!sales.length) { list.innerHTML = '<div class="empty">Ainda não há vendas concluídas.</div>'; return; }
+      list.innerHTML = sales.slice().reverse().slice(0, 20).map(sale => '<div class="history-item"><div><strong>Venda ' + escapeHtml(sale.id.slice(-5)) + '</strong><p>' + formatDateTime(sale.at) + ' · ' + sale.items.reduce((n, item) => n + item.quantity, 0) + ' item(ns)' + (sale.paymentMethod ? ' · ' + escapeHtml(sale.paymentMethod) : '') + '</p></div><strong>' + money(sale.total) + '</strong></div>').join('');
+    }
+
+    $('#confirmSale').addEventListener('click', () => {
+      const items = orderItems();
+      if (!items.length) { $('#saleStatus').style.color = 'var(--red)'; $('#saleStatus').textContent = 'Selecione pelo menos um item para confirmar.'; return; }
+      pendingSale = { items, total: orderTotal(), at: new Date().toISOString(), id: 'VENDA-' + Date.now() };
+      $('#paymentMethodTotal').textContent = money(pendingSale.total);
+      $('#paymentMethodStatus').textContent = '';
+      $('#paymentMethodStatus').style.color = 'var(--red)';
+      $('#paymentMethodModal').classList.add('visible');
+      $('#saleStatus').textContent = '';
+    });
+    function closePaymentMethods(discardOrder = true) {
+      $('#paymentMethodModal').classList.remove('visible');
+      if (discardOrder) pendingSale = null;
+    }
+    $('#closePaymentMethods').addEventListener('click', () => closePaymentMethods(true));
+    $('#cancelPaymentChoice').addEventListener('click', () => closePaymentMethods(true));
+    $('#paymentMethodModal').addEventListener('click', event => { if (event.target === $('#paymentMethodModal')) closePaymentMethods(true); });
+    document.querySelectorAll('[data-payment-method]').forEach(button => button.addEventListener('click', () => {
+      if (!pendingSale) return;
+      const method = button.dataset.paymentMethod;
+      if (method === 'PIX') {
+        let profile = null; try { profile = JSON.parse(localStorage.getItem(PROFILE_KEY) || 'null'); } catch (error) {}
+        if (!profile || !profile.pixKey) { $('#paymentMethodStatus').textContent = 'Cadastre uma chave PIX no Perfil ou escolha outra forma de pagamento.'; return; }
+        const key = pixKeyInfo(profile.pixKey, profile.pixKeyType || 'auto');
+        if (!key.valid) { $('#paymentMethodStatus').textContent = key.error + ' Você também pode escolher outra forma de pagamento.'; return; }
+        pendingSale.paymentMethod = 'PIX';
+        closePaymentMethods(false);
+        renderPayment({ ...profile, pixKey: key.value, pixKeyType: key.type });
+        showScreen('payment');
+        return;
+      }
+      closePaymentMethods(false);
+      pendingSale.paymentMethod = method;
+      renderNonPixPayment(method);
+      showScreen('payment');
+    }));
+
+    function pixKeyInfo(rawValue, requestedType = 'auto') {
+      const raw = String(rawValue || '').trim();
+      if (!raw) return { valid: false, error: 'Informe uma chave PIX.' };
+      const digits = raw.replace(/\D/g, '');
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const randomPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+      const cpfPattern = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
+      const cnpjPattern = /^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/;
+      let type = requestedType;
+      if (type === 'auto') {
+        if (emailPattern.test(raw)) type = 'email';
+        else if (randomPattern.test(raw)) type = 'random';
+        else if (cpfPattern.test(raw)) type = 'cpf';
+        else if (cnpjPattern.test(raw)) type = 'cnpj';
+        else if (/^\+?55[\s(]?\d{2}[\s)]?9?\d{4}[-\s]?\d{4}$/.test(raw) || /^\(\d{2}\)\s?9\d{4}-\d{4}$/.test(raw)) type = 'phone';
+        else if (digits.length === 14) type = 'cnpj';
+        else if (digits.length === 11) type = 'cpf';
+      }
+      if (type === 'email') return emailPattern.test(raw) ? { valid: true, type, label: 'E-mail', value: raw } : { valid: false, error: 'Informe um e-mail válido para a chave PIX.' };
+      if (type === 'cpf') return digits.length === 11 ? { valid: true, type, label: 'CPF', value: digits } : { valid: false, error: 'O CPF deve ter 11 números.' };
+      if (type === 'cnpj') return digits.length === 14 ? { valid: true, type, label: 'CNPJ', value: digits } : { valid: false, error: 'O CNPJ deve ter 14 números.' };
+      if (type === 'phone') {
+        let phone = digits;
+        if (phone.startsWith('55') && phone.length === 13) phone = phone.slice(2);
+        if (phone.length !== 11 || phone.charAt(2) !== '9') return { valid: false, error: 'O celular deve ter DDD e 9 dígitos, por exemplo: (91) 99999-9999.' };
+        return { valid: true, type, label: 'Celular', value: '+55' + phone };
+      }
+      if (type === 'random') return randomPattern.test(raw) ? { valid: true, type, label: 'Chave aleatória', value: raw.toLowerCase() } : { valid: false, error: 'A chave aleatória deve estar no formato UUID completo.' };
+      return { valid: false, error: 'Selecione o tipo da chave PIX ou informe um formato reconhecido.' };
+    }
+    function crc16(payload) {
+      let crc = 0xFFFF;
+      for (let i = 0; i < payload.length; i++) { crc ^= payload.charCodeAt(i) << 8; for (let bit = 0; bit < 8; bit++) crc = (crc & 0x8000) ? ((crc << 1) ^ 0x1021) & 0xFFFF : (crc << 1) & 0xFFFF; }
+      return crc.toString(16).toUpperCase().padStart(4, '0');
+    }
+    function pixField(id, value) { return id + String(value.length).padStart(2, '0') + value; }
+    function pixPayload(profile, total) {
+      const merchant = (profile.businessName || 'Churrasco e Hamburguer').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^A-Za-z0-9 ]/g, '').toUpperCase().slice(0, 25) || 'CHURRASCO E HAMBURGUERIA';
+      const merchantInfo = pixField('00', 'BR.GOV.BCB.PIX') + pixField('01', profile.pixKey);
+      let payload = pixField('00', '01') + pixField('26', merchantInfo) + pixField('52', '0000') + pixField('53', '986');
+      if (Number(total) > 0) payload += pixField('54', Number(total).toFixed(2));
+      payload += pixField('58', 'BR') + pixField('59', merchant) + pixField('60', 'BELEM') + pixField('62', pixField('05', '***'));
+      return payload + '6304' + crc16(payload + '6304');
+    }
+    function renderNonPixPayment(method) {
+      $('#paymentTypeLabel').textContent = '💳 Pagamento ' + method;
+      $('#paymentTitle').textContent = 'Confirme o pagamento';
+      $('#pixPaymentHint').style.display = 'none';
+      $('#paymentAmount').textContent = money(pendingSale.total);
+      $('#qrImage').style.display = 'none';
+      $('#pixPayload').style.display = 'none';
+      $('#paymentActions').style.display = 'flex';
+      $('#completeSale').textContent = 'Concluir';
+      $('#backToSale').textContent = 'Voltar';
+      $('#cancelSale').textContent = 'Cancelar';
+      $('#postSaleActions').style.display = 'none';
+      $('#orderReceipt').style.display = 'none';
+      $('#paymentStatus').style.color = 'var(--muted)';
+      $('#paymentStatus').textContent = method === 'Dinheiro' ? 'Receba o pagamento em dinheiro e toque em Concluir.' : 'Confirme o pagamento na maquininha e toque em Concluir.';
+    }
+    function renderPayment(profile) {
+      $('#paymentTypeLabel').textContent = '💳 Pagamento PIX';
+      $('#pixPaymentHint').style.display = 'block';
+      const payload = pixPayload(profile, pendingSale.total);
+      $('#paymentTitle').textContent = 'QR Code da venda';
+      $('#paymentAmount').textContent = money(pendingSale.total);
+      setQrImage($('#qrImage'), payload, () => { $('#paymentStatus').style.color = 'var(--red)'; $('#paymentStatus').textContent = 'Não foi possível carregar a imagem. Use o código PIX copia e cola.'; });
+      $('#qrImage').style.display = 'block'; $('#pixPayload').style.display = 'block'; $('#pixPayload').value = payload;
+      $('#paymentActions').style.display = 'flex'; $('#postSaleActions').style.display = 'none'; $('#orderReceipt').style.display = 'none'; $('#paymentStatus').textContent = '';
+    }
+    function renderOrderReceipt(sale) {
+      const profile = JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}');
+      $('#orderReceipt').innerHTML = '<h3>' + escapeHtml(profile.businessName || 'Churrasco e Hamburguer') + '</h3><div class="receipt-meta">Pedido concluído · ' + formatDateTime(sale.at) + (sale.paymentMethod ? ' · Pagamento: ' + escapeHtml(sale.paymentMethod) : '') + '</div>' + sale.items.map(item => '<div class="receipt-line"><span>' + item.quantity + 'x ' + escapeHtml(item.name) + '</span><strong>' + money(item.quantity * item.price) + '</strong></div>').join('') + '<div class="receipt-total"><span>Total</span><strong>' + money(sale.total) + '</strong></div>';
+    }
+    function completePendingSale(method) {
+      if (!pendingSale) return;
+      completedSaleForPrint = { ...pendingSale, paymentMethod: method, items: pendingSale.items.map(item => ({ ...item })) };
+      sales.push(completedSaleForPrint); saveSales(); currentOrder = {}; pendingSale = null;
+      $('#paymentTitle').textContent = 'Venda concluída · ' + method;
+      $('#paymentAmount').textContent = money(completedSaleForPrint.total);
+      $('#qrImage').style.display = 'none'; $('#pixPayload').style.display = 'none';
+      $('#paymentActions').style.display = 'none'; $('#postSaleActions').style.display = 'flex';
+      renderOrderReceipt(completedSaleForPrint); $('#orderReceipt').style.display = 'block';
+      $('#paymentStatus').style.color = 'var(--green)';
+      $('#paymentStatus').textContent = 'Pagamento registrado em ' + method + '. Imprima o pedido ou volte para a tela de vendas.';
+      showToast('Venda concluída com sucesso');
+    }
+    $('#completeSale').addEventListener('click', () => completePendingSale(pendingSale?.paymentMethod || 'PIX'));
+    $('#printOrder').addEventListener('click', () => {
+      if (!completedSaleForPrint) return;
+      document.body.classList.add('print-order');
+      const finish = () => { document.body.classList.remove('print-order'); window.removeEventListener('afterprint', finish); showScreen('sale'); };
+      window.addEventListener('afterprint', finish); window.print(); setTimeout(finish, 1600);
+    });
+    $('#returnAfterPrint').addEventListener('click', () => { completedSaleForPrint = null; showScreen('sale'); });
+    $('#backToSale').addEventListener('click', () => { pendingSale = null; showScreen('sale'); });
+    $('#cancelSale').addEventListener('click', () => { pendingSale = null; currentOrder = {}; showScreen('sale'); showToast('Venda cancelada'); });
+
+    function todaySales() { return sales.filter(sale => String(sale.at).slice(0, 10) === todayKey()); }
+    function reportRows() {
+      const totals = {};
+      todaySales().forEach(sale => sale.items.forEach(item => { if (!totals[item.name]) totals[item.name] = { name: item.name, quantity: 0, total: 0 }; totals[item.name].quantity += item.quantity; totals[item.name].total += item.quantity * item.price; }));
+      return Object.values(totals).sort((a, b) => a.name.localeCompare(b.name));
+    }
+    function paymentReportRows() {
+      const totals = {};
+      PAYMENT_METHODS.forEach(method => { totals[method] = { method, amount: 0, count: 0 }; });
+      todaySales().forEach(sale => {
+        const method = PAYMENT_METHODS.includes(sale.paymentMethod) ? sale.paymentMethod : 'PIX';
+        totals[method].amount += Number(sale.total || 0); totals[method].count += 1;
+      });
+      return PAYMENT_METHODS.map(method => totals[method]);
+    }
+    function renderReport() {
+      const rows = reportRows();
+      const payments = paymentReportRows();
+      const dailyTotal = todaySales().reduce((sum, sale) => sum + Number(sale.total || 0), 0);
+      const d = new Date();
+      const paymentTable = '<div class="payment-breakdown"><h3>Formas de pagamento recebidas</h3><table class="report-table"><thead><tr><th>Forma</th><th>Vendas</th><th>Valor recebido</th></tr></thead><tbody>' + payments.map(row => '<tr><td>' + escapeHtml(row.method) + '</td><td>' + row.count + '</td><td>' + money(row.amount) + '</td></tr>').join('') + '</tbody></table></div>';
+      $('#reportPreview').innerHTML = '<div class="report-title"><h3>Relatório diário</h3><p>Estabelecimento: ' + escapeHtml((JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}').businessName) || 'Churrasco e Hamburguer') + '</p><p>Data e horário de emissão: ' + formatDateTime(d) + '</p></div>' + (rows.length ? '<table class="report-table"><thead><tr><th>Item</th><th>Quantidade</th><th>Valor</th></tr></thead><tbody>' + rows.map(row => '<tr><td>' + escapeHtml(row.name) + '</td><td>' + row.quantity + '</td><td>' + money(row.total) + '</td></tr>').join('') + '</tbody></table>' : '<div class="empty">Nenhuma venda concluída hoje.</div>') + paymentTable + '<div class="report-total"><span>Total vendido</span><strong>' + money(dailyTotal) + '</strong></div><p class="small-note">Vendas concluídas hoje: ' + todaySales().length + ' · Quantidade total de itens: ' + rows.reduce((sum, row) => sum + row.quantity, 0) + '</p>';
+      $('#homeReportText').textContent = todaySales().length ? todaySales().length + ' venda(s) hoje · ' + money(dailyTotal) : 'Nenhuma venda concluída hoje.';
+    }
+
+    function reportLines() {
+      const profile = JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}');
+      const rows = reportRows(); const total = todaySales().reduce((sum, sale) => sum + Number(sale.total || 0), 0);
+      const payments = paymentReportRows();
+      return ['Estabelecimento: ' + (profile.businessName || 'Churrasco e Hamburguer'), 'Data e horario: ' + formatDateTime(new Date()), '', 'ITEM                         QTD       VALOR', ...rows.map(row => row.name.slice(0, 27).padEnd(29, ' ') + String(row.quantity).padStart(3, ' ') + '     ' + money(row.total)), '', 'FORMAS DE PAGAMENTO RECEBIDAS', 'Forma de pagamento             Vendas       Valor recebido', ...payments.map(row => row.method.padEnd(31, ' ') + String(row.count).padStart(3, ' ') + '          ' + money(row.amount)), '', 'Vendas concluidas: ' + todaySales().length, 'TOTAL VENDIDO: ' + money(total)];
+    }
+    function pdfEscape(text) { return String(text).normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^\x20-\x7E]/g, '').replace(/[\\()]/g, '\\$&'); }
+    function makePdf(lines) {
+      const stream = 'BT\n/F1 17 Tf\n50 790 Td\n(' + pdfEscape('RELATORIO DIARIO') + ') Tj\n/F1 10 Tf\n0 -25 Td\n' + lines.map(line => '(' + pdfEscape(line) + ') Tj\n0 -17 Td\n').join('') + 'ET';
+      const objects = ['<< /Type /Catalog /Pages 2 0 R >>', '<< /Type /Pages /Kids [3 0 R] /Count 1 >>', '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>', '<< /Length ' + stream.length + ' >>\nstream\n' + stream + '\nendstream', '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>'];
+      let pdf = '%PDF-1.4\n'; const offsets = [0];
+      objects.forEach((object, index) => { offsets.push(pdf.length); pdf += (index + 1) + ' 0 obj\n' + object + '\nendobj\n'; });
+      const xref = pdf.length; pdf += 'xref\n0 ' + (objects.length + 1) + '\n0000000000 65535 f \n' + offsets.slice(1).map(offset => String(offset).padStart(10, '0') + ' 00000 n \n').join('') + 'trailer\n<< /Size ' + (objects.length + 1) + ' /Root 1 0 R >>\nstartxref\n' + xref + '\n%%EOF';
+      return new Blob([pdf], { type: 'application/pdf' });
+    }
+    function downloadBlob(blob, filename) { const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1200); }
+    $('#printReport').addEventListener('click', () => { showScreen('reports'); window.print(); });
+    $('#saveReport').addEventListener('click', () => {
+      if (!todaySales().length) { $('#reportStatus').style.color = 'var(--red)'; $('#reportStatus').textContent = 'Não há vendas de hoje para salvar.'; return; }
+      downloadBlob(makePdf(reportLines()), 'relatorio-vendas-' + todayKey() + '.pdf');
+      sales = sales.filter(sale => String(sale.at).slice(0, 10) !== todayKey()); saveSales(); renderReport(); renderHistory();
+      $('#reportStatus').style.color = 'var(--green)'; $('#reportStatus').textContent = 'PDF salvo no dispositivo. As vendas do relatório foram removidas do aplicativo.'; showToast('Relatório salvo em PDF');
+    });
+    $('#sendWhatsapp').addEventListener('click', () => {
+      if (!todaySales().length) { $('#reportStatus').style.color = 'var(--red)'; $('#reportStatus').textContent = 'Não há vendas de hoje para enviar.'; return; }
+      const text = reportLines().join('\n'); window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank', 'noopener'); $('#reportStatus').style.color = 'var(--green)'; $('#reportStatus').textContent = 'WhatsApp aberto com o relatório pronto para enviar.';
+    });
+
+    loadData(); loadProfile(); setMaterialMode('entrada'); renderProducts(); renderSale(); renderInventory(); renderReport(); restoreProductsFromDevice();
+  </script>
+</body>
+</html>
